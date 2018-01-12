@@ -1,0 +1,26 @@
+Community Packages (25) /Users/01008969/.atom/packages
+├── atom-beautify@0.30.9
+├── autocomplete-paths@2.12.1
+├── autocomplete-python@1.10.5
+├── busy-signal@1.4.3
+├── convert-to-utf8@0.2.4
+├── es6-javascript@1.0.0
+├── file-icons@2.1.15
+├── highlight-selected@0.13.1
+├── intentions@1.1.5
+├── japanese-menu@1.13.0
+├── language-javascript-jsx@0.3.7
+├── language-plantuml@0.2.0
+├── linter@2.2.0
+├── linter-eslint@8.4.0
+├── linter-pycodestyle@2.1.3
+├── linter-python-pep8@0.2.0
+├── linter-ui-default@1.6.10
+├── minimap@4.29.7
+├── minimap-cursorline@0.2.0
+├── minimap-find-and-replace@4.5.2
+├── minimap-highlight-selected@4.6.1
+├── plantuml-viewer@0.4.1
+├── project-manager@3.3.5
+├── script@3.17.3
+└── term3@0.22.1
