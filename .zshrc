@@ -1,24 +1,38 @@
-# ls時の表示色設定
-export LSCOLORS=xbfxcxdxbxegedabagacad
-
 alias ll="ls -lG"
 alias la="ls -aG"
 alias lla="ls -laG"
 alias ltr="ls -ltrG"
 alias gi="git init"
-alias gs="git status" 
+alias gs="git status"
 alias ga="git add"
+alias gd="git checkout development"
+alias gp="git pull -p"
+alias gc="git checkout"
 alias gcm="git commit -m"
-
-eval "$(rbenv init -)"
-setopt nonomatch
+alias chrome="open -a '/Applications/Google Chrome.app'"
 
 # Get Global IP Address
 alias gip="curl inet-ip.info"
 
+# for Android Studio
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# for Anaconda
+export PATH=/opt/anaconda3/bin:$PATH
+
+# for Rust
+export PATH=$HOME/.cargo/bin:$PATH
+
 # 補完機能
 autoload -U compinit
 compinit
+
+# ruby version
+eval "$(rbenv init -)"
+export PATH="$HOME/.rbenv/shims:$PATH"
 
 # VCSの情報を取得するzsh関数
 autoload -Uz vcs_info
@@ -28,15 +42,37 @@ colors
 # PROMPT変数内で変数参照
 setopt prompt_subst
 
+zstyle ':vcs_info:git:*' check-for-changes true #formats 設定項目で %c,%u が使用可
+zstyle ':vcs_info:git:*' stagedstr "%F{green}!" #commit されていないファイルがある
+zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+" #add されていないファイルがある
+zstyle ':vcs_info:*' formats "%F{cyan}%c%u(%b)%f" #通常
+zstyle ':vcs_info:*' actionformats '[%b|%a]' #rebase 途中,merge コンフリクト等 formats 外の表示
+
+# %b ブランチ情報
+# %a アクション名(mergeなど)
+# %c changes
+# %u uncommit
+
+# プロンプト表示直前に vcs_info 呼び出し
+precmd () { vcs_info }
+
+# プロンプト（左）
+# PROMPT='%{$fg[green]%}[%n@%m]%{$reset_color%}'
+PROMPT='%{$fg[green]%}%# %{$reset_color%}'
+PROMPT=$PROMPT'${vcs_info_msg_0_} %{${fg[blue]}%}%}$%{${reset_color}%} '
+
+# プロンプト（右）
+RPROMPT='%{${fg[red]}%}[%~]%{${reset_color}%}'
+
 # -------- zplug設定 ----------
 # add plugin
 source /usr/local/opt/zplug/init.zsh
-zplug "mollifier/cd-gitroot"
-zplug "b4b4r07/enhancd", use:init.sh
-zplug "zsh-users/zsh-history-substring-search", hook-build:"__zsh_version 4.3"
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-zplug "zsh-users/zsh-completions"
-zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
+zplug "mollifier/cd-gitroot" &>/dev/null 2>&1
+zplug "b4b4r07/enhancd", use:init.sh &>/dev/null 2>&1
+zplug "zsh-users/zsh-history-substring-search", hook-build:"__zsh_version 4.3" &>/dev/null 2>&1
+zplug "zsh-users/zsh-syntax-highlighting", defer:2 &>/dev/null 2>&1
+zplug "zsh-users/zsh-completions" &>/dev/null 2>&1
+zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf &>/dev/null 2>&1
 
 # Rename a command with the string captured with `use` tag
 zplug "b4b4r07/httpstat", \
@@ -55,28 +91,36 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load --verbose
 
+function select-history() {
+  BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
+  CURSOR=$#BUFFER
+}
+zle -N select-history
+bindkey '^r' select-history
+
+# fbr - checkout git branch (including remote branches)
+fbr() {
+  local branches branch
+  branches=$(git branch --all | grep -v HEAD) &&
+  branch=$(echo "$branches" |
+           fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+  git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+}
+
 # -----------------------------
 
-zstyle ':vcs_info:git:*' check-for-changes true #formats 設定項目で %c,%u が使用可
-zstyle ':vcs_info:git:*' stagedstr "%F{green}!" #commit されていないファイルがある
-zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+" #add されていないファイルがある
-zstyle ':vcs_info:*' formats "%F{cyan}%c%u(%b)%f" #通常
-zstyle ':vcs_info:*' actionformats '[%b|%a]' #rebase 途中,merge コンフリクト等 formats 外の表示
+# env
+export PATH=/Users/kzk_maeda/Library/Python/3.7/bin/:~/.nodebrew/current/bin/:$PATH
 
-# %b ブランチ情報
-# %a アクション名(mergeなど)
-# %c changes
-# %u uncommit
+# gopath
+export GOPATH=$HOME/go:/Users/kzk_maeda/work/sutelura/line-bot-diagnosis/:/Users/kzk_maeda/work/golang/gochat/
+export PATH=$PATH:$GOPATH/bin
 
-# プロンプト表示直前に vcs_info 呼び出し
-precmd () { vcs_info }
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/kzk_maeda/Downloads/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/kzk_maeda/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
-# プロンプト（左）
-PROMPT='%{$fg[green]%}[%n@%m]%{$reset_color%}'
-PROMPT=$PROMPT'${vcs_info_msg_0_} %{${fg[blue]}%}%}$%{${reset_color}%} '
-
-# プロンプト（右）
-RPROMPT='%{${fg[red]}%}[%~]%{${reset_color}%}'
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/kzk_maeda/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/kzk_maeda/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 # motd
-cat ~/work/tmp/motd.txt
+cat ~/work/.motd/motd.txt
