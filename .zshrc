@@ -58,11 +58,15 @@ precmd () { vcs_info }
 
 # プロンプト（左）
 # PROMPT='%{$fg[green]%}[%n@%m]%{$reset_color%}'
-PROMPT='%{$fg[green]%}%# %{$reset_color%}'
-PROMPT=$PROMPT'${vcs_info_msg_0_} %{${fg[blue]}%}%}$%{${reset_color}%} '
+PROMPT='%{$fg[green]%}% %D %{$reset_color%}'
+PROMPT=$PROMPT'%{${fg[yellow]}%}%}%~ %{${reset_color}%} ${vcs_info_msg_0_} 
+%{$fg[green]%}% %* %{$reset_color%}%{${fg[yellow]}%}%}> '
 
 # プロンプト（右）
-RPROMPT='%{${fg[red]}%}[%~]%{${reset_color}%}'
+# RPROMPT='%{${fg[red]}%}[%~]%{${reset_color}%}'
+
+# auto suggestion
+. ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # -------- zplug設定 ----------
 # add plugin
@@ -123,4 +127,4 @@ if [ -f '/Users/kzk_maeda/Downloads/google-cloud-sdk/path.zsh.inc' ]; then sourc
 if [ -f '/Users/kzk_maeda/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/kzk_maeda/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 # motd
-cat ~/work/.motd/motd.txt
+cat ~/.motd/motd.txt
